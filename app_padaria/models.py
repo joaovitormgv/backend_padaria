@@ -24,6 +24,23 @@ class Fornecedor(models.Model):
 
     def __str__(self):
         return self.nome
+    
+
+class Cardapio(models.Model):
+    nome = models.CharField(max_length=120, verbose_name='Nome')
+    descricao = models.CharField(max_length= 300, verbose_name='Descrição')
+    preco = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Preço')
+    categoria = models.CharField(max_length=50, verbose_name='Categoria')
+    data_validade = models.DateField(null =True, blank =True, verbose_name='Data de validade')
+    quantidade_estoque = models.PositiveIntegerField(default=0, verbose_name='Quantidade em Estoque')
+    disponivel = models.BooleanField(default=True, editable=False, verbose_name='Disponível')
+
+    def __str__(self):
+        return self.nome
+    
+    def save(self):
+        self.disponivel = self.quantidade_estoque > 0 
+        super().save()
 
 
 class Cliente(models.Model):

@@ -35,4 +35,9 @@ urlpatterns = [
     path('recebimentos/adicionar', views.adicionar_recebimento, name='adicionar_recebimento'),
     path('recebimentos/editar/<recebimento_id>/', views.editar_recebimento, name='editar_recebimento'),
     path('recebimento/deletar/<recebimento_id>/', views.deletar_recebimento, name='deletar_recebimento'),
+
+    path('cardapio/', views.cardapio, name='cardapio'),
+    path('cardapio/adicionar', views.adicionar_cardapio, name='adicionar_cardapio'),
+    path('cardapio/editar/<int:cardapio_id>/', views.editar_cardapio, name='editar_cardapio'),
+    path('cardapio/deletar/<int:cardapio_id>/', views.deletar_cardapio, name='deletar_cardapio'),
 ]

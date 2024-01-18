@@ -1,5 +1,5 @@
 from django import forms
-from app_padaria.models import Fornecedor, Cliente, Recebimento, Pagamento
+from app_padaria.models import Fornecedor, Cliente, Recebimento, Pagamento, Cardapio
 
 from django.contrib.auth.models import User
 
@@ -136,3 +136,22 @@ class EditPagamentoForm(forms.ModelForm):
         widgets = {
             'data_vencimento': forms.widgets.DateInput(attrs={'type': 'date'})
         }
+
+
+class CardapioForm(forms.ModelForm):
+    class Meta:
+        model = Cardapio
+        exclude = ['disponivel']
+        widgets = {
+            'data_validade': forms.widgets.DateInput(attrs={'type': 'date'})
+        }
+
+
+class EditCardapioForm(forms.ModelForm):
+    class Meta:
+        model = Cardapio
+        exclude = ['disponivel']
+        widgets = {
+            'data_validade': forms.widgets.DateInput(attrs={'type': 'date'})
+        }
+

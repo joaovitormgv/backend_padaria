@@ -2,12 +2,11 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import AuthenticationForm, SetPasswordForm
+from django.contrib.auth.forms import AuthenticationForm, SetPasswordForm, UserCreationForm
 from django.contrib import messages
 
-from app_padaria.models import Fornecedor, Cliente, Recebimento, Pagamento
-from app_padaria.forms import FornecedorForm, clientesForm, RecebimentoForm, PagamentoForm, EditFornecedorForm, EditclientesForm, EditRecebimentoForm, EditPagamentoForm
-
+from app_padaria.models import Fornecedor, Cliente, Recebimento, Pagamento, Cardapio
+from app_padaria.forms import FornecedorForm, clientesForm, RecebimentoForm, PagamentoForm, EditFornecedorForm, EditclientesForm, EditRecebimentoForm, EditPagamentoForm, CardapioForm, EditCardapioForm
 from app_padaria.forms import UsuarioForm, EditUsuarioForm
 
 def login(request):
@@ -26,6 +25,22 @@ def login(request):
 def logout(request):
     auth_logout(request)
     return redirect('login')
+
+
+def cadastro(request):
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            messages.success(request, f'Usuário "{user.nome}" cadastrado com sucesso! Prossiga para o login.')
+            return redirect('login')
+    else:
+        form = UserCreationForm()
+
+    return render(request, 'autenticacao/cadastro.html', {
+        'title': 'Cadastrar Usuário',
+        'form': form
+    })
 
 
 @login_required
@@ -309,3 +324,53 @@ def deletar_recebimento(request, recebimento_id):
     recebimento.delete()
     messages.success(request, f'Pedido deletado com sucesso!')
     return redirect('recebimentos')
+
+@login_required
+def cardapio(request):
+    cardapio = Cardapio.objects.all()
+    return render(request, 'cardapio/cardapio.html', {
+        'title': 'Cardápio',
+        'cardapio': cardapio
+        })
+
+@login_required
+def adicionar_cardapio(request):
+    if request.method == 'POST':
+        form = CardapioForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Produro adicionado com sucesso.')
+            return redirect('cardapio')
+    else:
+        form = CardapioForm()
+
+    return render(request, 'cardapio/adicionar_cardapio.html', {
+        'title': 'Adicionar Produto',
+        'form': form
+        })
+
+@login_required
+def editar_cardapio(request, cardapio_id):
+    cardapio = get_object_or_404(Cardapio, pk=cardapio_id)
+
+    if request.method == 'POST':
+        form = EditCardapioForm(request.POST, instance=cardapio)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Produro editado com sucesso.')
+            return redirect('cardapio')
+    else:
+        form = EditCardapioForm(instance=cardapio)
+
+    return render(request, 'cardapio/editar_cardapio.html', {
+        'title': 'Editar Produto',
+        'form': form, 
+        'cardapio': cardapio
+        })
+
+@login_required
+def deletar_cardapio(request, cardapio_id):
+    cardapio = get_object_or_404(Cardapio, pk=cardapio_id)
+    cardapio.delete()
+    messages.success(request, f'Produto deletado com sucesso!')
+    return redirect('cardapio')
